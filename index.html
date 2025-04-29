@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babylon.js Shape with Texture</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <style>
+        /* 设置画布全屏 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas" touch-action="none"></canvas>
+    <script>
+        // 获取画布并创建引擎
+        const canvas = document.getElementById("renderCanvas");
+        const engine = new BABYLON.Engine(canvas, true);
+
+        // 创建场景
+        const createScene = () => {
+            const scene = new BABYLON.Scene(engine);
+
+            // 添加相机
+            const camera = new BABYLON.ArcRotateCamera("Camera", Math.PI, Math.PI * 0.3, 10, BABYLON.Vector3.Zero(), scene);
+            camera.attachControl(canvas, true);
+
+            // 添加光源
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+            // 创建移动的空物件
+            const emptyObject = new BABYLON.TransformNode("emptyObject", scene);
+
+            // 动态更新空物件的位置
+            let frame = 0;
+            scene.registerBeforeRender(() => {
+                frame++;
+                emptyObject.position = new BABYLON.Vector3(
+                    Math.sin(frame * 0.01) * 5,
+                    Math.cos(frame * 0.01) * 5,
+                    Math.sin(frame * 0.02) * 5
+                );
+            });
+
+            // 按次序生成 shape
+            let textureIndex = 0;
+            scene.registerBeforeRender(() => {
+                const plane = BABYLON.MeshBuilder.CreatePlane(`plane_${textureIndex}`, { size: 5 }, scene);
+                plane.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL; // 确保平面始终朝向摄像机
+                plane.position = emptyObject.position.clone(); // 设置平面位置为空物件位置
+
+                // 应用贴图
+                const material = new BABYLON.StandardMaterial(`planeMaterial_${textureIndex}`, scene);
+                const texture = new BABYLON.Texture(`/cwc/cwc${textureIndex}.png`, scene, true, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
+                texture.uScale = 1; // 水平缩放
+                texture.vScale = -1; // 垂直翻转
+                material.diffuseTexture = texture;
+                material.diffuseTexture.hasAlpha = true; // 启用透明通道
+                material.backFaceCulling = false; // 显示双面
+                plane.material = material;
+
+                // 设置 3 秒后销毁
+                setTimeout(() => {
+                    plane.dispose();
+                    material.dispose();
+                    texture.dispose();
+                }, 3000);
+
+                // 更新纹理索引
+                textureIndex = (textureIndex + 1) % 60; // 假设有 60 张 PNG 文件
+            });
+
+            return scene;
+        };
+
+        const scene = createScene();
+
+        // 渲染循环
+        engine.runRenderLoop(() => {
+            scene.render();
+        });
+
+        // 监听窗口大小调整
+        window.addEventListener("resize", () => {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
