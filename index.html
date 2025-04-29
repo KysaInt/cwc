@@ -105,7 +105,7 @@
 
                 // 应用贴图
                 const material = new BABYLON.StandardMaterial(`planeMaterial_${textureIndex}`, scene);
-                const texture = new BABYLON.Texture(`/cwc/cwc${textureIndex}.png`, scene, true, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
+                const texture = new BABYLON.Texture(`/CWC/cwc${textureIndex}.png`, scene, true, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
                 texture.uScale = 1; // 水平缩放
                 texture.vScale = -1; // 垂直翻转
                 material.diffuseTexture = texture;
