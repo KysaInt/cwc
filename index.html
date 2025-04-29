@@ -105,7 +105,7 @@
 
                 // 应用贴图
                 const material = new BABYLON.StandardMaterial(`planeMaterial_${textureIndex}`, scene);
-                const texture = new BABYLON.Texture(`/cwc/cwc${textureIndex}.png`, scene, true, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
+                const texture = new BABYLON.Texture(`cwc/cwc/cwc${textureIndex}.png`, scene, true, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
                 texture.uScale = 1; // 水平缩放
                 texture.vScale = -1; // 垂直翻转
                 material.diffuseTexture = texture;
@@ -153,7 +153,7 @@
             overlay.style.display = "none"; // 隐藏覆盖层
 
             // 播放背景音乐
-            const audio = new Audio("/bgm/cwcbgm.ogg");
+            const audio = new Audio("cwc/bgm/cwcbgm.ogg");
             audio.loop = true;
 
             // 等待用户交互后播放音频
