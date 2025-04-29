@@ -155,7 +155,15 @@
             // 播放背景音乐
             const audio = new Audio("/bgm/cwcbgm.ogg");
             audio.loop = true;
-            audio.play();
+
+            // 等待用户交互后播放音频
+            audio.play().catch(() => {
+                const resumeAudio = () => {
+                    audio.play();
+                    document.removeEventListener("click", resumeAudio);
+                };
+                document.addEventListener("click", resumeAudio);
+            });
 
             // 设置音频分析器
             setupAudioAnalyzer(audio);
